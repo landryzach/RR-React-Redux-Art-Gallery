@@ -1,17 +1,44 @@
 import './App.css';
-import Nav from './components/Nav'
-import ContentWrapper from './components/ContentWrapper'
-import Footer from './components/Footer'
+// import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch, connect} from 'react-redux'
+import {clearData, incrementId, decrementId, inputId, fetchData } from './features/dataSlice';
+
+export const mapStateToProps = (state) => ({
+  objectId: state.data.objectId
+})
 
 function App() {
   
+  const dispatch = useDispatch()
+  const data = useSelector((state) => state.data)
+  
+
+  const renderImg = () => {
+    if(data.apiData) {
+      return <img style={{'width': '70vw'}} src={data.apiData.primaryImage} alt={data.apiData.title}  />
+    }else{
+      return <p>No image found</p>
+    }
+  }
+
   return (
-    <div style={{ backgroundColor: 'white', color: 'black' }} className="App">
-      <Nav />
-      <ContentWrapper />
-      <Footer />
+    <div className="App">
+      <div>
+        <button onClick={() => dispatch(fetchData())}>Trigger Thunk</button>
+        <button onClick={() => dispatch(clearData())}>Clear</button>
+        <button onClick={() => dispatch(incrementId())}>Next</button>
+        <button onClick={() => dispatch(decrementId())}>Back</button>
+      </div>
+      <input value={data.objectId} onChange={(e) => {
+        dispatch(inputId(Number(e.target.value))) 
+      }} />
+      <div>
+        {renderImg()}
+        
+      </div>
     </div>
   );
 }
+
 
 export default App;
